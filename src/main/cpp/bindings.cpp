@@ -2683,8 +2683,8 @@ JNIEXPORT jobject JNICALL Java_org_kortforsyningen_proj_SharedPointer_normalizeF
     } catch (const std::exception &e) {
         try {
             CRSNNPtr crs = get_shared_object<CRS>(env, operation);
-            BaseObjectPtr ptr = crs.as_nullable();
             crs = crs->normalizeForVisualization();
+            BaseObjectPtr ptr = crs.as_nullable();
             return specific_subclass(env, operation, ptr, org_kortforsyningen_proj_Type_COORDINATE_REFERENCE_SYSTEM);
         } catch (const std::exception &e) {
             rethrow_as_java_exception(env, JPJ_ILLEGAL_ARGUMENT_EXCEPTION, e);
