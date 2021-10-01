@@ -133,11 +133,6 @@ final class Axis extends IdentifiableObject implements CoordinateSystemAxis {
      */
     @Override
     public RangeMeaning getRangeMeaning() {
-        if (Double.isInfinite(getMinimumValue()) && Double.isInfinite(getMaximumValue())) {
-            return RangeMeaning.WRAPAROUND;
-        } else if (Double.isFinite(getMinimumValue()) && Double.isFinite(getMaximumValue())) {
-            return RangeMeaning.EXACT;
-        }
         return null;
     }
 }
