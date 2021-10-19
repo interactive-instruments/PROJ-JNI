@@ -887,6 +887,39 @@ JNIEXPORT jobject JNICALL Java_org_kortforsyningen_proj_Context_createFromUserIn
 
 
 
+
+
+// </editor-fold>
+// ┌────────────────────────────────────────────────────────────────────────────────────────────┐
+// │                           INITIALIZATION 2  (CLASS NativeResource)                           │
+// └────────────────────────────────────────────────────────────────────────────────────────────┘
+// <editor-fold desc="Initialization 2">
+
+/**
+ * Set the search path for data files.
+ *
+ * @param  env      The JNI environment.
+ * @param  caller   The class from which this method has been invoked.
+ * @param  context  The Context object for the current thread.
+ * @param  path     The search path.
+ */
+JNIEXPORT void JNICALL Java_org_kortforsyningen_proj_NativeResource_setSearchPath(JNIEnv *env, jclass caller, jobject context, jstring path) {
+    BaseObjectPtr result = nullptr;
+    const char *path_utf = env->GetStringUTFChars(path, nullptr);
+    if (path_utf) {
+        try {
+            PJ_CONTEXT *ctx = context ? get_context(env, context) : nullptr;
+            proj_context_set_search_paths(ctx, 1, &path_utf);
+        } catch (const std::exception &e) {
+            rethrow_as_java_exception(env, JPJ_FACTORY_EXCEPTION, e);
+        }
+        env->ReleaseStringUTFChars(path, path_utf);     // Must be after the catch block in case an exception happens.
+    }
+}
+
+
+
+
 // </editor-fold>
 // ┌────────────────────────────────────────────────────────────────────────────────────────────┐
 // │                      CLASS SharedPointer (except format and inverse)                       │

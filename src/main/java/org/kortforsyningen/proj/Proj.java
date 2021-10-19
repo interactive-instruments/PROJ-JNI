@@ -94,6 +94,17 @@ public final class Proj {
     }
 
     /**
+     * Set the search path for data files.
+     *
+     * @param  path     The search path.
+     */
+    public static void setSearchPath(String path) {
+        try (Context c = Context.acquire()) {
+            NativeResource.setSearchPath(c, path);
+        }
+    }
+
+    /**
      * Returns a factory for creating coordinate reference systems from codes allocated by the given authority.
      * The authority is typically "EPSG", but not necessarily; other authorities like "IAU" are also allowed.
      * Typical values are:
