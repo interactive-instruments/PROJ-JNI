@@ -158,7 +158,7 @@ abstract class NativeResource {
         if (res == null) {
             throw new UnsatisfiedLinkError("Missing native file: " + nativeFile);
         }
-        if (!"jar".equals(res.getProtocol()) && !"bundleresource".equals(res.getProtocol())) {
+        if (!"jar".equals(res.getProtocol()) && !"bundle".equals(res.getProtocol()) && !"bundleresource".equals(res.getProtocol())) {
            return Paths.get(res.toURI());
         }
         /*
