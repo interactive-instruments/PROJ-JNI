@@ -99,9 +99,7 @@ public final class Proj {
      * @param  path     The search path.
      */
     public static void setSearchPath(String path) {
-        try (Context c = Context.acquire()) {
-            NativeResource.setSearchPath(c, path);
-        }
+        Context.setSearchPath(path);
     }
 
     /**
