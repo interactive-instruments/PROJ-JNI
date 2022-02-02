@@ -2665,6 +2665,7 @@ JNIEXPORT void JNICALL Java_org_kortforsyningen_proj_Transform_transform
             env->ReleasePrimitiveArrayCritical(coordinates, data, 0);
             const int err = proj_errno(pj);
             if (err) {
+                proj_errno_reset(pj);
                 jclass c = env->FindClass(JPJ_TRANSFORM_EXCEPTION);
                 if (c) env->ThrowNew(c, proj_errno_string(err));
             } else if (isCopy) {
