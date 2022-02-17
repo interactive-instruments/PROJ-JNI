@@ -789,6 +789,8 @@ JNIEXPORT jobject JNICALL Java_org_kortforsyningen_proj_UnitOfMeasure_create
 JNIEXPORT jlong JNICALL Java_org_kortforsyningen_proj_Context_create(JNIEnv *env, jclass caller) {
     static_assert(sizeof(PJ_CONTEXT*) <= sizeof(jlong), "Can not store PJ_CONTEXT* in a jlong.");
     PJ_CONTEXT *ctx = proj_context_create();
+    //TODO: method analogue to setSearchPath
+    proj_log_level(ctx, PJ_LOG_NONE);
     return reinterpret_cast<jlong>(ctx);
 }
 
