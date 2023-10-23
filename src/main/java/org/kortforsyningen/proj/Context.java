@@ -67,7 +67,7 @@ final class Context extends NativeResource implements AutoCloseable {
      */
     private static final Deque<Context> CONTEXTS = new ConcurrentLinkedDeque<>();
 
-    private static String searchPath = null;
+    private static String[] searchPath = null;
 
     /**
      * Timestamp (as given by {@link System#nanoTime()}) of last use of this context.
@@ -104,7 +104,7 @@ final class Context extends NativeResource implements AutoCloseable {
      */
     private static native long create();
 
-    static void setSearchPath(String path) {
+    static void setSearchPath(String[] path) {
         searchPath = path;
     }
 

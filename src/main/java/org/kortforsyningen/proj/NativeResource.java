@@ -114,9 +114,9 @@ abstract class NativeResource {
      * @param  context    pointer to the PROJ thread context.
      * @param  path       The search path.
      *
-     * @see Proj#setSearchPath(String path)
+     * @see Proj#setSearchPath(String[] path)
      */
-    static native void setSearchPath(Context context, String path);
+    static native void setSearchPath(Context context, String[] path);
 
     /**
      * Returns an absolute path to the Java Native Interface C/C++ code.

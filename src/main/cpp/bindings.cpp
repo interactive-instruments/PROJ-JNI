@@ -905,17 +905,29 @@ JNIEXPORT jobject JNICALL Java_org_kortforsyningen_proj_Context_createFromUserIn
  * @param  context  The Context object for the current thread.
  * @param  path     The search path.
  */
-JNIEXPORT void JNICALL Java_org_kortforsyningen_proj_NativeResource_setSearchPath(JNIEnv *env, jclass caller, jobject context, jstring path) {
+JNIEXPORT void JNICALL Java_org_kortforsyningen_proj_NativeResource_setSearchPath(JNIEnv *env, jclass caller, jobject context, jobjectArray paths) {
     BaseObjectPtr result = nullptr;
-    const char *path_utf = env->GetStringUTFChars(path, nullptr);
-    if (path_utf) {
+
+    const char *searchPaths[8];
+    jsize stringCount = (*env).GetArrayLength(paths);
+
+    for (int i=0; i<stringCount; i++) {
+          jstring path = (jstring) (*env).GetObjectArrayElement( paths, i);
+          param[i] = (*env).GetStringUTFChars( path, nullptr);
+    }
+
+    if (stringCount > 0) {
         try {
             PJ_CONTEXT *ctx = context ? get_context(env, context) : nullptr;
-            proj_context_set_search_paths(ctx, 1, &path_utf);
+            proj_context_set_search_paths(ctx, (int)stringCount, &searchPaths);
         } catch (const std::exception &e) {
             rethrow_as_java_exception(env, JPJ_FACTORY_EXCEPTION, e);
         }
-        env->ReleaseStringUTFChars(path, path_utf);     // Must be after the catch block in case an exception happens.
+        // Must be after the catch block in case an exception happens.
+        for (int i=0; i<stringCount; i++) {
+          jstring path = (jstring) (*env).GetObjectArrayElement( paths, i);
+          env->ReleaseStringUTFChars(path, param[i]);
+        }
     }
 }
 

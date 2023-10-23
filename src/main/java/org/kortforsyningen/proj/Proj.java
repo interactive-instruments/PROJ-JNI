@@ -98,7 +98,7 @@ public final class Proj {
      *
      * @param  path     The search path.
      */
-    public static void setSearchPath(String path) {
+    public static void setSearchPath(String... path) {
         Context.setSearchPath(path);
     }
 
