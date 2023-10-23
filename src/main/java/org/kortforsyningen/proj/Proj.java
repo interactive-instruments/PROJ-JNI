@@ -96,10 +96,10 @@ public final class Proj {
     /**
      * Set the search path for data files.
      *
-     * @param  path     The search path.
+     * @param  paths     The search path.
      */
-    public static void setSearchPath(String... path) {
-        Context.setSearchPath(path);
+    public static void setSearchPath(String... paths) {
+        Context.setSearchPath(paths);
     }
 
     /**

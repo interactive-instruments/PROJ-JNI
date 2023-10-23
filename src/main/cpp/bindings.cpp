@@ -903,7 +903,7 @@ JNIEXPORT jobject JNICALL Java_org_kortforsyningen_proj_Context_createFromUserIn
  * @param  env      The JNI environment.
  * @param  caller   The class from which this method has been invoked.
  * @param  context  The Context object for the current thread.
- * @param  path     The search path.
+ * @param  paths     The search paths.
  */
 JNIEXPORT void JNICALL Java_org_kortforsyningen_proj_NativeResource_setSearchPath(JNIEnv *env, jclass caller, jobject context, jobjectArray paths) {
     BaseObjectPtr result = nullptr;

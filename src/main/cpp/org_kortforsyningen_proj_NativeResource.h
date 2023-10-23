@@ -21,7 +21,7 @@ JNIEXPORT jstring JNICALL Java_org_kortforsyningen_proj_NativeResource_version
  * Signature: (Lorg/kortforsyningen/proj/Context;Ljava/lang/String;)V
  */
 JNIEXPORT void JNICALL Java_org_kortforsyningen_proj_NativeResource_setSearchPath
-  (JNIEnv *, jclass, jobject, jstring);
+  (JNIEnv *, jclass, jobject, jobjectArray);
 
 /*
  * Class:     org_kortforsyningen_proj_NativeResource

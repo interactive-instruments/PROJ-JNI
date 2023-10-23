@@ -104,8 +104,8 @@ final class Context extends NativeResource implements AutoCloseable {
      */
     private static native long create();
 
-    static void setSearchPath(String[] path) {
-        searchPath = path;
+    static void setSearchPath(String[] paths) {
+        searchPath = paths;
     }
 
     /**
