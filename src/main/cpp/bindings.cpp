@@ -919,7 +919,7 @@ JNIEXPORT void JNICALL Java_org_kortforsyningen_proj_NativeResource_setSearchPat
     if (stringCount > 0) {
         try {
             PJ_CONTEXT *ctx = context ? get_context(env, context) : nullptr;
-            proj_context_set_search_paths(ctx, (int)stringCount, &searchPaths);
+            proj_context_set_search_paths(ctx, (int)stringCount, searchPaths);
         } catch (const std::exception &e) {
             rethrow_as_java_exception(env, JPJ_FACTORY_EXCEPTION, e);
         }
