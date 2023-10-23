@@ -913,7 +913,7 @@ JNIEXPORT void JNICALL Java_org_kortforsyningen_proj_NativeResource_setSearchPat
 
     for (int i=0; i<stringCount; i++) {
           jstring path = (jstring) (*env).GetObjectArrayElement( paths, i);
-          param[i] = (*env).GetStringUTFChars( path, nullptr);
+          searchPaths[i] = (*env).GetStringUTFChars( path, nullptr);
     }
 
     if (stringCount > 0) {
@@ -926,7 +926,7 @@ JNIEXPORT void JNICALL Java_org_kortforsyningen_proj_NativeResource_setSearchPat
         // Must be after the catch block in case an exception happens.
         for (int i=0; i<stringCount; i++) {
           jstring path = (jstring) (*env).GetObjectArrayElement( paths, i);
-          env->ReleaseStringUTFChars(path, param[i]);
+          env->ReleaseStringUTFChars(path, searchPaths[i]);
         }
     }
 }
