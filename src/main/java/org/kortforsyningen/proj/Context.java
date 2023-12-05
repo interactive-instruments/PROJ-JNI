@@ -67,6 +67,8 @@ final class Context extends NativeResource implements AutoCloseable {
      */
     private static final Deque<Context> CONTEXTS = new ConcurrentLinkedDeque<>();
 
+    private static String[] searchPath = null;
+
     /**
      * Timestamp (as given by {@link System#nanoTime()}) of last use of this context.
      * Used for determining if the {@link #TIMEOUT} has been elapsed for this context.
@@ -102,6 +104,10 @@ final class Context extends NativeResource implements AutoCloseable {
      */
     private static native long create();
 
+    static void setSearchPath(String[] paths) {
+        searchPath = paths;
+    }
+
     /**
      * Gets a PROJ context, creating a new one if needed.
      * This method shall be invoked in a {@code try} block as below:
@@ -118,7 +124,10 @@ final class Context extends NativeResource implements AutoCloseable {
      */
     static Context acquire() {
         final Context c = CONTEXTS.pollLast();
-        return (c != null) ? c : new Context();
+        if (c != null) return c;
+        Context nc = new Context();
+        if (searchPath != null) NativeResource.setSearchPath(nc, searchPath);
+        return nc;
     }
 
     /**
@@ -192,7 +201,7 @@ final class Context extends NativeResource implements AutoCloseable {
         Context c = CONTEXTS.peekFirst();
         if (c != null) {
             final long time = System.nanoTime();
-            while (time - c.lastUse > TIMEOUT) {
+            while (c != null && time - c.lastUse > TIMEOUT) {
                 c = CONTEXTS.pollFirst();                   // Verify again since it may have changed concurrently.
                 if (c == null) return;
                 if (time - c.lastUse <= TIMEOUT) try {

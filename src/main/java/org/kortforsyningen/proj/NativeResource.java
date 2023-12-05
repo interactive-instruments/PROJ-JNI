@@ -109,6 +109,16 @@ abstract class NativeResource {
     static native String version();
 
     /**
+     * Set the search path for data files.
+     *
+     * @param  context    pointer to the PROJ thread context.
+     * @param  paths       The search paths.
+     *
+     * @see Proj#setSearchPath(String[] paths)
+     */
+    static native void setSearchPath(Context context, String[] paths);
+
+    /**
      * Returns an absolute path to the Java Native Interface C/C++ code.
      * If the resources can not be accessed by an absolute path,
      * then this method copies the resource in a temporary file.
@@ -148,7 +158,7 @@ abstract class NativeResource {
         if (res == null) {
             throw new UnsatisfiedLinkError("Missing native file: " + nativeFile);
         }
-        if (!"jar".equals(res.getProtocol()) && !"bundleresource".equals(res.getProtocol())) {
+        if (!"jar".equals(res.getProtocol()) && !"bundle".equals(res.getProtocol()) && !"bundleresource".equals(res.getProtocol()) && !"resource".equals(res.getProtocol())) {
            return Paths.get(res.toURI());
         }
         /*

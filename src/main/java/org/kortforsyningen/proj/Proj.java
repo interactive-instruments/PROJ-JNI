@@ -94,6 +94,15 @@ public final class Proj {
     }
 
     /**
+     * Set the search path for data files.
+     *
+     * @param  paths     The search path.
+     */
+    public static void setSearchPath(String... paths) {
+        Context.setSearchPath(paths);
+    }
+
+    /**
      * Returns a factory for creating coordinate reference systems from codes allocated by the given authority.
      * The authority is typically "EPSG", but not necessarily; other authorities like "IAU" are also allowed.
      * Typical values are:
@@ -397,6 +406,17 @@ public final class Proj {
             return (CoordinateOperation) ((IdentifiableObject) operation).impl.normalizeForVisualization();
         } else {
             throw new UnsupportedImplementationException("operation", operation);
+        }
+    }
+
+
+
+    public static CoordinateReferenceSystem normalizeForVisualization(final CoordinateReferenceSystem crs) {
+        Objects.requireNonNull(crs);
+        if (crs instanceof IdentifiableObject) {
+            return (CoordinateReferenceSystem) ((IdentifiableObject) crs).impl.normalizeForVisualization();
+        } else {
+            throw new UnsupportedImplementationException("crs", crs);
         }
     }
 
