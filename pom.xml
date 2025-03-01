@@ -96,12 +96,11 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <release>8</release>
+          <release>11</release>
           <showWarnings>true</showWarnings>
           <showDeprecation>true</showDeprecation>
           <useIncrementalCompilation>false</useIncrementalCompilation>
           <compilerArgs>
-            <arg>--doclint-format</arg> <arg>html5</arg>
             <arg>-h</arg> <arg>${project.build.sourceDirectory}/../cpp</arg>
           </compilerArgs>
         </configuration>

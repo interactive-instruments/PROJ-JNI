@@ -104,6 +104,7 @@ using osgeo::proj::cs::TemporalMeasureCS;
 using osgeo::proj::cs::VerticalCS;
 using osgeo::proj::cs::VerticalCSNNPtr;
 using osgeo::proj::datum::Datum;
+using osgeo::proj::datum::DatumNNPtr;
 using osgeo::proj::datum::Ellipsoid;
 using osgeo::proj::datum::EllipsoidNNPtr;
 using osgeo::proj::datum::EngineeringDatum;
@@ -788,6 +789,8 @@ JNIEXPORT jobject JNICALL Java_org_kortforsyningen_proj_UnitOfMeasure_create
 JNIEXPORT jlong JNICALL Java_org_kortforsyningen_proj_Context_create(JNIEnv *env, jclass caller) {
     static_assert(sizeof(PJ_CONTEXT*) <= sizeof(jlong), "Can not store PJ_CONTEXT* in a jlong.");
     PJ_CONTEXT *ctx = proj_context_create();
+    //TODO: method analogue to setSearchPath
+    proj_log_level(ctx, PJ_LOG_NONE);
     return reinterpret_cast<jlong>(ctx);
 }
 
@@ -886,6 +889,51 @@ JNIEXPORT jobject JNICALL Java_org_kortforsyningen_proj_Context_createFromUserIn
 
 
 
+
+
+// </editor-fold>
+// ┌────────────────────────────────────────────────────────────────────────────────────────────┐
+// │                           INITIALIZATION 2  (CLASS NativeResource)                           │
+// └────────────────────────────────────────────────────────────────────────────────────────────┘
+// <editor-fold desc="Initialization 2">
+
+/**
+ * Set the search path for data files.
+ *
+ * @param  env      The JNI environment.
+ * @param  caller   The class from which this method has been invoked.
+ * @param  context  The Context object for the current thread.
+ * @param  paths     The search paths.
+ */
+JNIEXPORT void JNICALL Java_org_kortforsyningen_proj_NativeResource_setSearchPath(JNIEnv *env, jclass caller, jobject context, jobjectArray paths) {
+    BaseObjectPtr result = nullptr;
+
+    const char *searchPaths[8];
+    jsize stringCount = (*env).GetArrayLength(paths);
+
+    for (int i=0; i<stringCount; i++) {
+          jstring path = (jstring) (*env).GetObjectArrayElement( paths, i);
+          searchPaths[i] = (*env).GetStringUTFChars( path, nullptr);
+    }
+
+    if (stringCount > 0) {
+        try {
+            PJ_CONTEXT *ctx = context ? get_context(env, context) : nullptr;
+            proj_context_set_search_paths(ctx, (int)stringCount, searchPaths);
+        } catch (const std::exception &e) {
+            rethrow_as_java_exception(env, JPJ_FACTORY_EXCEPTION, e);
+        }
+        // Must be after the catch block in case an exception happens.
+        for (int i=0; i<stringCount; i++) {
+          jstring path = (jstring) (*env).GetObjectArrayElement( paths, i);
+          env->ReleaseStringUTFChars(path, searchPaths[i]);
+        }
+    }
+}
+
+
+
+
 // </editor-fold>
 // ┌────────────────────────────────────────────────────────────────────────────────────────────┐
 // │                      CLASS SharedPointer (except format and inverse)                       │
@@ -948,6 +996,9 @@ JNIEXPORT jobject JNICALL Java_org_kortforsyningen_proj_SharedPointer_getObjectP
             }
             case org_kortforsyningen_proj_Property_DATUM: {
                 value = get_shared_object<SingleCRS>(env, object)->datum();
+                if (value == nullptr) {
+                    value = get_shared_object<SingleCRS>(env, object)->datumEnsemble()->datums().front().as_nullable();
+                }
                 type  = org_kortforsyningen_proj_Type_DATUM;
                 break;
             }
@@ -2628,6 +2679,7 @@ JNIEXPORT void JNICALL Java_org_kortforsyningen_proj_Transform_transform
             env->ReleasePrimitiveArrayCritical(coordinates, data, 0);
             const int err = proj_errno(pj);
             if (err) {
+                proj_errno_reset(pj);
                 jclass c = env->FindClass(JPJ_TRANSFORM_EXCEPTION);
                 if (c) env->ThrowNew(c, proj_errno_string(err));
             } else if (isCopy) {
@@ -2677,7 +2729,14 @@ JNIEXPORT jobject JNICALL Java_org_kortforsyningen_proj_SharedPointer_normalizeF
         BaseObjectPtr ptr = cop.as_nullable();
         return specific_subclass(env, operation, ptr, org_kortforsyningen_proj_Type_COORDINATE_OPERATION);
     } catch (const std::exception &e) {
-        rethrow_as_java_exception(env, JPJ_ILLEGAL_ARGUMENT_EXCEPTION, e);
+        try {
+            CRSNNPtr crs = get_shared_object<CRS>(env, operation);
+            crs = crs->normalizeForVisualization();
+            BaseObjectPtr ptr = crs.as_nullable();
+            return specific_subclass(env, operation, ptr, org_kortforsyningen_proj_Type_COORDINATE_REFERENCE_SYSTEM);
+        } catch (const std::exception &e) {
+            rethrow_as_java_exception(env, JPJ_ILLEGAL_ARGUMENT_EXCEPTION, e);
+        }
     }
     return nullptr;
 }
