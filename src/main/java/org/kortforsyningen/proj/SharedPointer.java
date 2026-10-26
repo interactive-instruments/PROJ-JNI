@@ -56,7 +56,9 @@ class SharedPointer extends NativeResource {
      * @return value of the specified property, or {@code null} if undefined.
      * @throws RuntimeException if the specified property does not exist for this object.
      */
-    final native IdentifiableObject getObjectProperty(short property);
+    // Declared as Object because units are returned too: C2 trusts the declared return type of
+    // native methods and would otherwise fold identity checks against Unit instances to false.
+    final native Object getObjectProperty(short property);
 
     /**
      * Returns a property value as a string.
