@@ -141,14 +141,16 @@ abstract class NativeResource {
          *
          *      jar:file:/home/…/proj.jar!/org/…/libproj-binding.so
          *
-         * The URL can be used directly only if it is an ordinary file (without "jar" protocol).
+         * The URL can be used directly only if it is an ordinary file (with "file" protocol).
+         * Other protocols include "bundle" or "bundleresource" (OSGi), "resource" (GraalVM native
+         * image) and "jrt" (jlink runtime image).
          */
         final String nativeFile = prefix + NATIVE_LIB + suffix;
         final URL res = NativeResource.class.getResource(nativeFile);
         if (res == null) {
             throw new UnsatisfiedLinkError("Missing native file: " + nativeFile);
         }
-        if (!"jar".equals(res.getProtocol()) && !"bundleresource".equals(res.getProtocol())) {
+        if ("file".equals(res.getProtocol())) {
            return Paths.get(res.toURI());
         }
         /*
